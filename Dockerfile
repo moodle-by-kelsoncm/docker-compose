@@ -4,7 +4,7 @@
 FROM php:8.3.24-apache-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV MOODLE_VERSION=4.5.6
+ENV MOODLE_VERSION=5.0.0
 
 ADD build/php-extensions.sh             /tmp/build/php-extensions.sh
 ADD build/locale.gen                    /etc/locale.gen
