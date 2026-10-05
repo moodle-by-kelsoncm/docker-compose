@@ -22,7 +22,7 @@ services:
             start_period: 10s
 
     moodle:
-        image: meu/moodle:4.5.6.001
+        image: meu/moodle:5.3.0.001
         build:
             context: .
         ports:
