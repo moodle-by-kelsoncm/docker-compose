@@ -1,30 +1,41 @@
 #!/usr/bin/env bash
 
 set -e
-if [ "$1" == "" ] || [ "$@" == "apache2-foreground" ]; then
+
+run_as_www_data() {
+    if [ "$(id -u)" = "0" ]; then
+        runuser -u www-data -- "$@"
+    else
+        "$@"
+    fi
+}
+
+if [ "$1" = "" ] || [ "$1" = "supervisord" ] || [ "$1" = "/usr/bin/supervisord" ] || [ "$1" = "apache2-foreground" ]; then
     echo "Starting Moodle"
-    if [ "{$CFG_ADMINUSER}" != "" ]; then
+    if [ "${CFG_ADMINUSER}" != "" ]; then
         cp /var/www/html/deploy/climaintenance.html /var/www/moodledata/climaintenance.html
         apache2ctl start &
 
-        php waitdb.php
+        run_as_www_data php waitdb.php
 
         echo "Install Moodle database, if necessary." \
-        && php admin/cli/install_database.php --agree-license --lang=en --adminuser=admin --adminpass=admin --adminemail=admin@server.local --fullname=Moodle --shortname=Moodle --summary=Moodle \
+        && run_as_www_data php admin/cli/install_database.php --agree-license --lang=en --adminuser=admin --adminpass=admin --adminemail=admin@server.local --fullname=Moodle --shortname=Moodle --summary=Moodle \
         && echo "Install Moodle: OK"
 
         echo "Upgrade Moodle database, if necessary" \
-        && php admin/cli/upgrade.php --non-interactive --allow-unstable \
+        && run_as_www_data php admin/cli/upgrade.php --non-interactive --allow-unstable \
         && echo "Upgrade Moodle: OK"
 
         echo "Baixa os content types do H5P"
-        php admin/cli/scheduled_task.php -f --execute=\\core\\task\\h5p_get_content_types_task >> /var/log/moodle/cron.log &
+        run_as_www_data php admin/cli/scheduled_task.php -f --execute=\\core\\task\\h5p_get_content_types_task >> /var/log/moodle/cron.log &
         echo "Upgrade Moodle: OK"
 
         apache2ctl stop
-        rm /var/www/moodledata/climaintenance.html
-        /usr/local/bin/cron-loopexec.sh &
-        sleep 5
+        rm -f /var/www/moodledata/climaintenance.html
+    fi
+
+    if [ "$(id -u)" = "0" ]; then
+        chown -R www-data:www-data /var/www/moodledata /var/log/moodle /var/log/apache2
     fi
 fi
 
