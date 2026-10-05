@@ -22,7 +22,7 @@ services:
             start_period: 10s
 
     moodle:
-        image: kelsoncm/moodle:5.3.0.001
+        image: kelsoncm/moodle:5.3.0.002
         build:
             context: .
         ports:
@@ -71,7 +71,9 @@ services:
             db:
                 condition: service_healthy
         command:
-            - apache2-foreground
+            - /usr/bin/supervisord
+            - -c
+            - /etc/supervisor/supervisord.conf
 
 volumes:
     moodle_db:

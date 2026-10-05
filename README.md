@@ -14,7 +14,7 @@ Não se esqueça de alterar o arquivo `docker-compose.yml`, especialmente a `ima
 services:
 # ...
     moodle:
-        image: meu/moodle:5.3.0.001
+        image: meu/moodle:5.3.0.002
 ```
 
 ## Observações
