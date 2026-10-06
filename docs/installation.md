@@ -19,7 +19,7 @@
    ```yaml
    services:
      moodle:
-       image: meu/moodle:5.3.0.002
+       image: meu/moodle:4.5.15.001
    ```
 3. Construa as imagens e inicie os contêineres:
    ```bash

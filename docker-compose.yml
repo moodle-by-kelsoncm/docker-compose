@@ -22,7 +22,7 @@ services:
             start_period: 10s
 
     moodle:
-        image: kelsoncm/moodle:5.3.0.002
+        image: kelsoncm/moodle:4.5.15.001
         build:
             context: .
         ports:

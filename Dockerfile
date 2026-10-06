@@ -4,7 +4,7 @@
 FROM php:8.3.24-apache-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV MOODLE_VERSION=5.3.0
+ENV MOODLE_VERSION=4.5.15
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
 ADD build/php-extensions.sh             /tmp/build/php-extensions.sh
