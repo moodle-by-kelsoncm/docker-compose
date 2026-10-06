@@ -28,3 +28,12 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: kelsoncm/moodle:${{ github.ref_name }}
+
+      - name: Update Docker Hub Description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME || vars.DOCKERHUB_USERNAME || 'kelsoncm' }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: kelsoncm/moodle
+          short-description: "Production-ready Moodle image on PHP 8.3 Apache with built-in cron worker."
+          readme-filepath: ./DOCKERHUB.md
