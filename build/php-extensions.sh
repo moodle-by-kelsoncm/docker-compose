@@ -15,14 +15,14 @@ PACKAGES_RUNTIME="ghostscript libaio1 libcurl4 libgss3 libicu72 libmcrypt-dev li
 
 # Packages for other Moodle runtime dependenices.
 # aspell - Correção ortográfica Usado no TinyMCE.
-# cron - Execução em background. Usado nas Tasks.
+# supervisor - Gerenciador de processos (Apache + Cron).
 # locales - Localização. Usado em Idiomas.
 # poppler-utils - PDF para PNG. Usado no Atividade.
-PACKAGES_EXTRA="aspell cron locales poppler-utils graphviz neovim git"
+PACKAGES_EXTRA="aspell supervisor locales poppler-utils graphviz neovim git"
 
 apt-get update
 apt-get upgrade -y
-apt-get install -y --no-install-recommends apt-transport-https $BUILD_PACKAGES $PACKAGES_POSTGRES $PACKAGES_RUNTIME $PACKAGES_EXTRA
+apt-get install -y --no-install-recommends -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" apt-transport-https $BUILD_PACKAGES $PACKAGES_POSTGRES $PACKAGES_RUNTIME $PACKAGES_EXTRA
 
 echo "Installing php extensions"
 
