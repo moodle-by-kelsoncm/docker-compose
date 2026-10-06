@@ -5,7 +5,7 @@ FROM php:8.3.24-apache-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV MOODLE_VERSION=4.5.15
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+ENV APACHE_DOCUMENT_ROOT=/var/www/html
 
 ADD build/php-extensions.sh             /tmp/build/php-extensions.sh
 ADD build/locale.gen                    /etc/locale.gen
@@ -31,7 +31,7 @@ RUN    /tmp/build/php-extensions.sh \
 ADD src/supervisor/                     /etc/supervisor/
 
 ADD --chown=www-data:www-data src/php/ /var/www/html/
-RUN ln -s /var/www/html/probes /var/www/html/public/probes
+RUN mkdir -p /var/www/html/public && ln -sf /var/www/html/probes /var/www/html/public/probes
 
 ADD build/moodle-install-package.sh     /tmp/build/moodle-install-package.sh
 ADD build/plugins                 /tmp/build/plugins
