@@ -4,7 +4,7 @@ filename=$(echo $1 | cut -d '/' -f2)
 plugin_name=$(echo $filename | sed 's/_moodle.*//g' | awk '{printf "%-32s\n", $0}')
 plugin_version=$(echo $filename | sed 's/.*_moodle//g' | sed 's/.*_//g' | sed 's/\.zip.*//g' | awk '{printf "%-11s\n", $0}')
 plugin_type=$(echo $plugin_name | cut -d '_' -f1)
-wwwroot=/var/www/html
+wwwroot=/var/www/html/public
 dir=''
 case $plugin_type in
     'auth')
@@ -80,7 +80,7 @@ export NC='\033[0m' # No Color
 #export URI_BASE='https://raw.githubusercontent.com/cte-zl-ifrn/.github/refs/heads/main/moodle_plugins' # No Color
 export URI_BASE='/tmp/build/plugins/' # No Color
 
-cd $dir && \
+mkdir -p "$dir" && cd "$dir" && \
 echo -e "${COLOR_LIGHT_GREEN}INSTALL ${COLOR_RED}$plugin_name${COLOR_LIGHT_GREEN}, ${COLOR_CIAN}$plugin_version${COLOR_LIGHT_GREEN} at ${COLOR_PURPLE}$dir${NC}, from $URL_BASE/$1" && \
 #curl -s -o d.zip $URL_BASE/$1 && \
 #unzip -q -o d.zip && \

@@ -21,3 +21,13 @@ docker compose exec -T moodle php admin/cli/upgrade.php --non-interactive
 ```bash
 docker compose exec -T moodle php admin/cli/purge_caches.php
 ```
+
+### Visualizar status dos processos gerenciados (Supervisord):
+```bash
+docker compose exec moodle supervisorctl status
+```
+
+### Reiniciar o worker de cron:
+```bash
+docker compose exec moodle supervisorctl restart moodle-cron
+```

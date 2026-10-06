@@ -22,11 +22,11 @@ services:
             start_period: 10s
 
     moodle:
-        image: meu/moodle:4.5.6.001
+        image: kelsoncm/moodle:5.3.0.002
         build:
             context: .
         ports:
-            - 80:80
+            - 8080:80
         environment:
             - CFG_DBHOST=db
             - CFG_DBPORT=5432
@@ -37,7 +37,7 @@ services:
             - CFG_ENV=local
             - CFG_DEBUG=false
             - CFG_PREFIX=mdl_
-            - CFG_WWWROOT=http://localhost
+            - CFG_WWWROOT=http://localhost:8080
             - CFG_PROBES_TOKEN=changeme
             - CFG_PROBES_MAINTENANCE=true
             - CFG_PROBES_SESSION_REDIS=true
@@ -71,7 +71,9 @@ services:
             db:
                 condition: service_healthy
         command:
-            - apache2-foreground
+            - /usr/bin/supervisord
+            - -c
+            - /etc/supervisor/supervisord.conf
 
 volumes:
     moodle_db:
