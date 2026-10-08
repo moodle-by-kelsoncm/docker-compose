@@ -13,21 +13,22 @@ extensions = [
 templates_path = []
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-language = "pt_BR"
+language = "en"
 
 html_theme = "moodle_docs_theme"
 html_theme_path = [moodle_docs_theme.get_html_theme_path()]
 
 html_theme_options = {
     "project_name": "moodle-docker-compose",
-    "tagline": "Ambiente containerizado Docker Compose para desenvolvimento Moodle",
+    "tagline": "Containerized Docker Compose environment for Moodle development",
     "github_url": "https://github.com/moodle-by-kelsoncm/docker-compose",
     "github_repo": "moodle-by-kelsoncm/docker-compose",
     "github_version": "MOODLE_503",
-    "doc_path": "docs/",
+    "doc_path": "docs/en/",
     "show_edit_on_github": True,
     "enable_dark_mode": True,
-    "navigation_links": "Início|index, Instalação|installation, Configuração|configuration, Uso|usage",
+    "enable_language_selector": True,
+    "navigation_links": "Home|index, Installation|installation, Configuration|configuration, Usage|usage",
 }
 
 html_static_path = []
