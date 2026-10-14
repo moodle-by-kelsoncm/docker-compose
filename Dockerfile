@@ -18,10 +18,10 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 RUN    /tmp/build/php-extensions.sh \
     && chmod 777 /tmp \
     && chmod +t /tmp \
-    \
     && curl -L https://github.com/moodle/moodle/archive/refs/tags/v$MOODLE_VERSION.tar.gz | tar -zx --strip-components=1 \
-    && mkdir /var/www/moodledata \
-    && chown -R www-data:www-data /var/www \
+    && mkdir -p /var/moodledata /var/www/moodledata \
+    && chown -R www-data:www-data /var/moodledata /var/www \
+    && chmod 775 /var/moodledata \
     && chmod -R 755 /var/www \
     && mkdir -p /var/log/moodle      && chown -R www-data:www-data /var/log/moodle \
     && mkdir -p /var/log/apache2     && chown -R www-data:www-data /var/log/apache2 \

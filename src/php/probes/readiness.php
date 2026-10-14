@@ -11,7 +11,8 @@
     $checks = [];
 
     try {
-        if (file_exists("/var/www/moodledata/climaintenance.html")) {
+        $dataroot = env('CFG_DATAROOT', '/var/www/moodledata');
+        if (file_exists("$dataroot/climaintenance.html")) {
             $checks[] = ["Modo de manutenção inativo", false];
         } else {
             $checks[] = ["Modo de manutenção inativo", true];
