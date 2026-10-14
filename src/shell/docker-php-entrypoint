@@ -12,8 +12,9 @@ run_as_www_data() {
 
 if [ "$1" = "" ] || [ "$1" = "supervisord" ] || [ "$1" = "/usr/bin/supervisord" ] || [ "$1" = "apache2-foreground" ]; then
     echo "Starting Moodle"
+    DATAROOT="${CFG_DATAROOT:-/var/www/moodledata}"
     if [ "${CFG_ADMINUSER}" != "" ]; then
-        cp /var/www/html/deploy/climaintenance.html /var/www/moodledata/climaintenance.html
+        cp /var/www/html/deploy/climaintenance.html "${DATAROOT}/climaintenance.html"
         apache2ctl start &
 
         run_as_www_data php waitdb.php
@@ -31,11 +32,11 @@ if [ "$1" = "" ] || [ "$1" = "supervisord" ] || [ "$1" = "/usr/bin/supervisord" 
         echo "Upgrade Moodle: OK"
 
         apache2ctl stop
-        rm -f /var/www/moodledata/climaintenance.html
+        rm -f "${DATAROOT}/climaintenance.html"
     fi
 
     if [ "$(id -u)" = "0" ]; then
-        chown -R www-data:www-data /var/www/moodledata /var/log/moodle /var/log/apache2
+        chown -R www-data:www-data "$DATAROOT" /var/moodledata /var/www/moodledata /var/log/moodle /var/log/apache2 2>/dev/null || true
     fi
 fi
 
