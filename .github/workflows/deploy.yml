@@ -24,16 +24,26 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME || vars.DOCKERHUB_USERNAME || 'kelsoncm' }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Docker Image
+      - name: Build and Push Docker Image (Production)
         uses: docker/build-push-action@v7
         with:
           context: .
           file: ./Dockerfile
+          target: prod
           push: true
           tags: kelsoncm/moodle:${{ github.ref_name }}
 
+      - name: Build and Push Docker Image (Development)
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./Dockerfile
+          target: dev
+          push: true
+          tags: kelsoncm/moodle-for-dev:${{ github.ref_name }}
+
       - name: Update Docker Hub Description
-        uses: peter-evans/dockerhub-description@v4
+        uses: peter-evans/dockerhub-description@v5
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME || vars.DOCKERHUB_USERNAME || 'kelsoncm' }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}

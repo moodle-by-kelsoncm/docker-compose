@@ -25,10 +25,15 @@ services:
 
 ## CI/CD
 
-O repositório possui um workflow do GitHub Actions (`.github/workflows/deploy.yml`) para publicar automaticamente a imagem Docker no Docker Hub em `kelsoncm/moodle:<tagname>` sempre que uma tag git for criada e enviada (push).
+O repositório possui um workflow do GitHub Actions (`.github/workflows/deploy.yml`) para
+publicar automaticamente as imagens Docker no Docker Hub sempre que uma tag git for criada:
+- `kelsoncm/moodle:<tagname>`: Imagem de produção (baseada no estágio `prod`).
+- `kelsoncm/moodle-for-dev:<tagname>`: Imagem para desenvolvimento (estágio `dev`),
+  com Node.js 22, Grunt CLI, Composer, moodle-cs, PHPUnit 11, PCOV e Xdebug.
 
 ### Variáveis / Segredos necessários no GitHub:
-Configure as seguintes variáveis de segredo (Secrets) no repositório GitHub em **Settings -> Secrets and variables -> Actions**:
+Configure as seguintes variáveis de segredo (Secrets) no repositório GitHub
+em **Settings -> Secrets and variables -> Actions**:
 - `DOCKERHUB_USERNAME`: Nome de usuário do Docker Hub (ex.: `kelsoncm`).
 - `DOCKERHUB_TOKEN`: Personal Access Token (PAT) ou senha do Docker Hub com permissão de escrita.
 
