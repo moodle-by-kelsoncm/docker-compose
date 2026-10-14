@@ -1,7 +1,7 @@
 ############################
 ## Imagem base
 ####################################################################################
-FROM php:8.3.24-apache-bookworm
+FROM php:8.3.24-apache-bookworm AS base
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV MOODLE_VERSION=5.3.0
@@ -44,3 +44,68 @@ WORKDIR /var/www/html
 EXPOSE 80
 ENTRYPOINT ["docker-php-entrypoint"]
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+
+
+############################
+## STAGE: dev
+############################
+FROM base AS dev
+
+ENV NVM_DIR=/usr/local/nvm
+ENV NODE_VERSION=22.11.0
+ENV PATH=${NVM_DIR}/versions/node/v${NODE_VERSION}/bin:${PATH}
+
+ARG NVM_INSTALL_SHA256="2d8359a64a3cb07c02389ad88ceecd43f2fa469c06104f92f98df5b6f315275f"
+ARG PHPUNIT_11_PHAR_SHA256="9d58674e826904add392d08c5ba3e9173ff36b242683cd8f368a476d2513b3bd"
+
+USER root
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        bash \
+        curl \
+        ca-certificates \
+        git \
+        xz-utils \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p ${NVM_DIR} \
+    && curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh -o /tmp/nvm-install.sh \
+    && echo "${NVM_INSTALL_SHA256}  /tmp/nvm-install.sh" | sha256sum -c - \
+    && bash /tmp/nvm-install.sh \
+    && rm -f /tmp/nvm-install.sh \
+    && . ${NVM_DIR}/nvm.sh \
+    && nvm install ${NODE_VERSION} \
+    && nvm use ${NODE_VERSION} \
+    && npm install -g grunt-cli
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+RUN export COMPOSER_ALLOW_SUPERUSER=1 \
+    && mkdir -p /opt/phpcs \
+    && cd /opt/phpcs \
+    && composer init --no-interaction \
+    && composer config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true \
+    && composer require moodlehq/moodle-cs \
+    && ln -s /opt/phpcs/vendor/bin/phpcs /usr/local/bin/phpcs \
+    && ln -s /opt/phpcs/vendor/bin/phpcbf /usr/local/bin/phpcbf
+
+RUN curl -fL https://phar.phpunit.de/phpunit-11.phar -o /usr/local/bin/phpunit \
+    && chmod +x /usr/local/bin/phpunit
+
+RUN pecl install xdebug \
+    && rm -rf /tmp/pear
+
+RUN echo "pcov.enabled=1" >> /usr/local/etc/php/conf.d/20-pcov.ini \
+    && echo "pcov.directory=." >> /usr/local/etc/php/conf.d/20-pcov.ini
+
+USER root
+WORKDIR /var/www/html
+EXPOSE 80
+ENTRYPOINT ["docker-php-entrypoint"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+
+
+############################
+## STAGE: prod
+############################
+FROM base AS prod
