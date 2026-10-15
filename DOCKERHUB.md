@@ -11,6 +11,7 @@ Imagem Docker otimizada para o Moodle, pronta para ambientes de desenvolvimento 
 - **PHP 8.3 + Apache**: Baseada no Debian Bookworm com extensões PHP essenciais configuradas (`gd`, `intl`, `mysqli`, `pgsql`, `opcache`, `zip`, `soap`, `xmlrpc`, `ldap`, etc.).
 - **Cron Integrado**: Execução automática do `cron.php` do Moodle via worker gerenciado pelo Supervisord sem a necessidade de contêineres adicionais ou cronjobs no host.
 - **Configuração Automática por Variáveis de Ambiente**: Instalação e conexão com banco de dados totalmente automatizadas via variáveis `CFG_*`.
+- **Dependências do Core e Roteador HTTP**: Dependências PHP do Composer instaladas na raiz (`vendor/`) e Apache configurado com o roteador do Moodle 5.x (`FallbackResource /r.php`).
 - **Probes de Saúde e Monitoramento**: Endpoints nativos em `/probes` para monitoramento de disponibilidade, banco de dados e cron.
 
 ---
