@@ -51,7 +51,7 @@ docker-php-ext-enable redis
 echo "America/Recife" > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata locales
 
-a2enmod headers
+a2enmod headers rewrite
 
 # Keep our image size down..
 pecl clear-cache

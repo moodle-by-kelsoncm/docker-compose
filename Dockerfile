@@ -12,6 +12,8 @@ ADD build/locale.gen                    /etc/locale.gen
 ADD src/ini/                            /usr/local/etc/php/conf.d/
 ADD src/shell/                          /usr/local/bin/
 
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
     && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
@@ -19,6 +21,9 @@ RUN    /tmp/build/php-extensions.sh \
     && chmod 777 /tmp \
     && chmod +t /tmp \
     && curl -L https://github.com/moodle/moodle/archive/refs/tags/v$MOODLE_VERSION.tar.gz | tar -zx --strip-components=1 \
+    && export COMPOSER_ALLOW_SUPERUSER=1 \
+    && composer install --no-dev --classmap-authoritative --no-interaction \
+    && composer clear-cache \
     && mkdir -p /var/moodledata /var/www/moodledata \
     && chown -R www-data:www-data /var/moodledata /var/www \
     && chmod 775 /var/moodledata \
@@ -31,7 +36,11 @@ RUN    /tmp/build/php-extensions.sh \
 ADD src/supervisor/                     /etc/supervisor/
 
 ADD --chown=www-data:www-data src/php/ /var/www/html/
-RUN ln -s /var/www/html/probes /var/www/html/public/probes
+RUN ln -s /var/www/html/probes /var/www/html/public/probes \
+    && printf '<IfModule mod_dir.c>\n    DirectoryIndex index.php index.html\n</IfModule>\n<IfModule mod_negotiation.c>\n    Options -MultiViews\n</IfModule>\nFallbackResource /r.php\n' > /var/www/html/public/.htaccess \
+    && chown www-data:www-data /var/www/html/public/.htaccess \
+    && printf '<Directory /var/www/html/public>\n    AllowOverride All\n    FallbackResource /r.php\n</Directory>\n' >> /etc/apache2/conf-available/docker-php.conf \
+    && a2enconf docker-php
 
 ADD build/moodle-install-package.sh     /tmp/build/moodle-install-package.sh
 ADD build/plugins                 /tmp/build/plugins
@@ -77,8 +86,6 @@ RUN apt-get update \
     && nvm install ${NODE_VERSION} \
     && nvm use ${NODE_VERSION} \
     && npm install -g grunt-cli
-
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 RUN export COMPOSER_ALLOW_SUPERUSER=1 \
     && mkdir -p /opt/phpcs \
