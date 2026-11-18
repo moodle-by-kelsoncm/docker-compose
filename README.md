@@ -65,7 +65,7 @@ Exemplo de serviço em `docker-compose.yml`:
             - CFG_PHPUNIT_DATAROOT=/var/phpunitdata
             - CFG_PHPUNIT_PREFIX=phpu_
         tmpfs:
-            - /var/phpunitdata:uid=33,gid=33,mode=0770,size=2g
+            - /var/phpunitdata:mode=1777,size=2g
 ```
 
 Inicialize e rode (como `www-data`):
