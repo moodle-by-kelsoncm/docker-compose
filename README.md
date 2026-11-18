@@ -37,3 +37,44 @@ em **Settings -> Secrets and variables -> Actions**:
 - `DOCKERHUB_USERNAME`: Nome de usuário do Docker Hub (ex.: `kelsoncm`).
 - `DOCKERHUB_TOKEN`: Personal Access Token (PAT) ou senha do Docker Hub com permissão de escrita.
 
+
+## PHPUnit (estágio `dev`)
+
+O estágio `dev` já vem pronto para rodar o PHPUnit do core e de plugins:
+
+- dependências de desenvolvimento do composer do core instaladas (`moodle/moodle-testing`, com `vendor/bin/phpunit`);
+- `opcache.enable_cli=1` (arquivo `30-opcache-dev.ini`), o que acelera a suíte, que roda num único processo.
+
+O PHPUnit só é habilitado no `config.php` quando estas variáveis de ambiente são definidas. Sem `CFG_PHPUNIT_DATAROOT`, nada muda:
+
+| Variável | Padrão | Descrição |
+| :--- | :--- | :--- |
+| `CFG_PHPUNIT_DATAROOT` | (vazia) | `$CFG->phpunit_dataroot`. Use um caminho em `tmpfs` (ex.: `/var/phpunitdata`). |
+| `CFG_PHPUNIT_PREFIX` | `phpu_` | `$CFG->phpunit_prefix`. Precisa ser diferente de `CFG_PREFIX`. |
+| `CFG_PHPUNIT_DIRECTORYPERMISSIONS` | (vazia) | `$CFG->phpunit_directorypermissions`, em octal (ex.: `02777`). |
+| `CFG_PHPUNIT_PROFILINGENABLED` | `false` | `$CFG->phpunit_profilingenabled`. |
+
+Exemplo de serviço em `docker-compose.yml`:
+
+```yaml
+    moodle:
+        build:
+            context: .
+            target: dev
+        environment:
+            - CFG_PHPUNIT_DATAROOT=/var/phpunitdata
+            - CFG_PHPUNIT_PREFIX=phpu_
+        tmpfs:
+            - /var/phpunitdata:mode=1777,size=2g
+```
+
+Inicialize e rode (como `www-data`):
+
+```bash
+php public/admin/tool/phpunit/cli/init.php
+vendor/bin/phpunit public/user/tests/table/participants_search_test.php
+vendor/bin/phpunit --filter participants_search_test
+```
+
+Dicas de desempenho: mantenha o core dentro da imagem (sem bind mount), o `phpunit_dataroot` em `tmpfs`
+e, num banco de desenvolvimento descartável, desligue `fsync`, `synchronous_commit` e `full_page_writes` do PostgreSQL.

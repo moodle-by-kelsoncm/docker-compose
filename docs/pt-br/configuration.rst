@@ -15,3 +15,16 @@ Variáveis de Ambiente
 ---------------------
 
 As variáveis de banco de dados (ex: MariaDB/PostgreSQL), portas HTTP/HTTPS e volume de uploads são configuráveis no `docker-compose.yml`.
+
+PHPUnit (estágio ``dev``)
+-------------------------
+
+O estágio ``dev`` traz as dependências de desenvolvimento do composer do core (``vendor/bin/phpunit``) e ``opcache.enable_cli=1``.
+O PHPUnit só é habilitado no ``config.php`` quando ``CFG_PHPUNIT_DATAROOT`` está definida; sem ela, nada muda.
+
+- ``CFG_PHPUNIT_DATAROOT``: ``$CFG->phpunit_dataroot``. Use um caminho em ``tmpfs`` (ex.: ``/var/phpunitdata``).
+- ``CFG_PHPUNIT_PREFIX``: ``$CFG->phpunit_prefix`` (padrão ``phpu_``). Precisa ser diferente de ``CFG_PREFIX``.
+- ``CFG_PHPUNIT_DIRECTORYPERMISSIONS``: ``$CFG->phpunit_directorypermissions``, em octal (ex.: ``02777``).
+- ``CFG_PHPUNIT_PROFILINGENABLED``: ``$CFG->phpunit_profilingenabled`` (padrão ``false``).
+
+Depois, como ``www-data``: ``php public/admin/tool/phpunit/cli/init.php`` e ``vendor/bin/phpunit <arquivo ou --filter>``.
