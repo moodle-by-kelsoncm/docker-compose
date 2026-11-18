@@ -27,4 +27,4 @@ O PHPUnit só é habilitado no ``config.php`` quando ``CFG_PHPUNIT_DATAROOT`` es
 - ``CFG_PHPUNIT_DIRECTORYPERMISSIONS``: ``$CFG->phpunit_directorypermissions``, em octal (ex.: ``02777``).
 - ``CFG_PHPUNIT_PROFILINGENABLED``: ``$CFG->phpunit_profilingenabled`` (padrão ``false``).
 
-Depois, como ``www-data``: ``php admin/tool/phpunit/cli/init.php`` e ``vendor/bin/phpunit <arquivo ou --filter>``.
+Depois, como ``www-data``: ``php public/admin/tool/phpunit/cli/init.php`` e ``vendor/bin/phpunit <arquivo ou --filter>``.

@@ -71,7 +71,7 @@ Exemplo de serviço em `docker-compose.yml`:
 Inicialize e rode (como `www-data`):
 
 ```bash
-php admin/tool/phpunit/cli/init.php
+php public/admin/tool/phpunit/cli/init.php
 vendor/bin/phpunit public/user/tests/table/participants_search_test.php
 vendor/bin/phpunit --filter participants_search_test
 ```
