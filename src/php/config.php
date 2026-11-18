@@ -804,6 +804,19 @@ if (env('CFG_ENV', 'local') == 'local' && env_as_bool('CFG_DEBUG', false)) {
 // $CFG->phpunit_directorypermissions = 02777; // optional
 // $CFG->phpunit_profilingenabled = true; // optional to profile PHPUnit runs.
 //
+// Nesta imagem o PHPUnit só é habilitado quando CFG_PHPUNIT_DATAROOT estiver definida
+// (ex.: /var/phpunitdata, de preferência um tmpfs). Sem ela, nada muda.
+// CFG_PHPUNIT_PREFIX define o prefixo das tabelas de teste (padrão: phpu_) e precisa
+// ser diferente de CFG_PREFIX.
+if (env('CFG_PHPUNIT_DATAROOT')) {
+  $CFG->phpunit_dataroot = env('CFG_PHPUNIT_DATAROOT');
+  $CFG->phpunit_prefix = env('CFG_PHPUNIT_PREFIX', 'phpu_');
+  if (env('CFG_PHPUNIT_DIRECTORYPERMISSIONS')) {
+    $CFG->phpunit_directorypermissions = octdec(env('CFG_PHPUNIT_DIRECTORYPERMISSIONS'));
+  }
+  $CFG->phpunit_profilingenabled = env_as_bool('CFG_PHPUNIT_PROFILINGENABLED', false);
+}
+//
 //
 //=========================================================================
 // 10. SECRET PASSWORD SALT

@@ -99,6 +99,18 @@ RUN export COMPOSER_ALLOW_SUPERUSER=1 \
 RUN curl -fL https://phar.phpunit.de/phpunit-11.phar -o /usr/local/bin/phpunit \
     && chmod +x /usr/local/bin/phpunit
 
+# Dependências de desenvolvimento do core (moodle/moodle-testing: PHPUnit e Behat),
+# exigidas por admin/tool/phpunit/cli/init.php e vendor/bin/phpunit.
+RUN export COMPOSER_ALLOW_SUPERUSER=1 \
+    && cd /var/www/html \
+    && composer install --optimize-autoloader --no-interaction \
+    && composer clear-cache \
+    && chown -R www-data:www-data /var/www/html/vendor
+
+# OPcache também na CLI: acelera a suíte do PHPUnit, que roda num único processo.
+RUN printf 'opcache.enable_cli=1\nopcache.memory_consumption=256\nopcache.max_accelerated_files=50000\n' \
+        > /usr/local/etc/php/conf.d/30-opcache-dev.ini
+
 RUN pecl install xdebug \
     && rm -rf /tmp/pear
 
